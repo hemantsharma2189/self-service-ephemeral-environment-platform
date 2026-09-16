@@ -14,9 +14,7 @@ def render_kubernetes_manifests(
 ) -> str:
     labels = {
         "app.kubernetes.io/name": plan.environment_name,
-        "preview.platform/pr": str(
-            request.pull_request_number
-        ),
+        "preview.platform/pr": str(request.pull_request_number),
         "preview.platform/owner": request.owner,
         "preview.platform/managed-by": "preview-env-platform",
     }
@@ -28,9 +26,7 @@ def render_kubernetes_manifests(
             "name": plan.namespace,
             "labels": labels,
             "annotations": {
-                "preview.platform/ttl-hours": str(
-                    request.ttl_hours
-                ),
+                "preview.platform/ttl-hours": str(request.ttl_hours),
                 "preview.platform/commit": request.commit_sha,
             },
         },
@@ -64,11 +60,7 @@ def render_kubernetes_manifests(
         },
         "spec": {
             "replicas": 1,
-            "selector": {
-                "matchLabels": {
-                    "app": plan.environment_name
-                }
-            },
+            "selector": {"matchLabels": {"app": plan.environment_name}},
             "template": {
                 "metadata": {
                     "labels": {
@@ -80,9 +72,7 @@ def render_kubernetes_manifests(
                     "automountServiceAccountToken": False,
                     "securityContext": {
                         "runAsNonRoot": True,
-                        "seccompProfile": {
-                            "type": "RuntimeDefault"
-                        },
+                        "seccompProfile": {"type": "RuntimeDefault"},
                     },
                     "containers": [
                         {
@@ -92,33 +82,21 @@ def render_kubernetes_manifests(
                             "ports": [
                                 {
                                     "name": "http",
-                                    "containerPort": (
-                                        request.container_port
-                                    ),
+                                    "containerPort": (request.container_port),
                                 }
                             ],
                             "securityContext": {
                                 "allowPrivilegeEscalation": False,
-                                "capabilities": {
-                                    "drop": ["ALL"]
-                                },
+                                "capabilities": {"drop": ["ALL"]},
                             },
                             "resources": {
                                 "requests": {
-                                    "cpu": (
-                                        request.resources.cpu_request
-                                    ),
-                                    "memory": (
-                                        request.resources.memory_request
-                                    ),
+                                    "cpu": (request.resources.cpu_request),
+                                    "memory": (request.resources.memory_request),
                                 },
                                 "limits": {
-                                    "cpu": (
-                                        request.resources.cpu_limit
-                                    ),
-                                    "memory": (
-                                        request.resources.memory_limit
-                                    ),
+                                    "cpu": (request.resources.cpu_limit),
+                                    "memory": (request.resources.memory_limit),
                                 },
                             },
                         }
@@ -137,9 +115,7 @@ def render_kubernetes_manifests(
             "labels": labels,
         },
         "spec": {
-            "selector": {
-                "app": plan.environment_name
-            },
+            "selector": {"app": plan.environment_name},
             "ports": [
                 {
                     "name": "http",
@@ -163,9 +139,7 @@ def render_kubernetes_manifests(
             "ingressClassName": "nginx",
             "rules": [
                 {
-                    "host": urlparse(
-                        plan.preview_url
-                    ).hostname,
+                    "host": urlparse(plan.preview_url).hostname,
                     "http": {
                         "paths": [
                             {
@@ -173,12 +147,8 @@ def render_kubernetes_manifests(
                                 "pathType": "Prefix",
                                 "backend": {
                                     "service": {
-                                        "name": (
-                                            plan.environment_name
-                                        ),
-                                        "port": {
-                                            "number": 80
-                                        },
+                                        "name": (plan.environment_name),
+                                        "port": {"number": 80},
                                     }
                                 },
                             }

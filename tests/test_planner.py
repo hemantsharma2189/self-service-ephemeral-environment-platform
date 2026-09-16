@@ -22,10 +22,7 @@ def create_request(
 def test_environment_plan_uses_pull_request_identity() -> None:
     plan = create_environment_plan(create_request())
 
-    assert (
-        plan.environment_name
-        == "sample-cloud-application-pr-42"
-    )
+    assert plan.environment_name == "sample-cloud-application-pr-42"
     assert plan.namespace == "preview-pr-42"
     assert plan.preview_url == "https://pr-42.preview.local"
     assert plan.dry_run is True

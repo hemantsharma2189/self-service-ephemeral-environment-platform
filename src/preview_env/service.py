@@ -20,18 +20,14 @@ def generate_environment_artifacts(
         plan=plan,
     )
 
-    environment_directory = (
-        Path(output_directory) / plan.environment_name
-    )
+    environment_directory = Path(output_directory) / plan.environment_name
     environment_directory.mkdir(
         parents=True,
         exist_ok=True,
     )
 
     plan_path = environment_directory / "plan.json"
-    manifests_path = (
-        environment_directory / "manifests.yaml"
-    )
+    manifests_path = environment_directory / "manifests.yaml"
     summary_path = environment_directory / "summary.md"
 
     plan_data = {
@@ -49,10 +45,7 @@ def generate_environment_artifacts(
         encoding="utf-8",
     )
 
-    policy_list = "\n".join(
-        f"- {decision}"
-        for decision in plan.policy_decisions
-    )
+    policy_list = "\n".join(f"- {decision}" for decision in plan.policy_decisions)
 
     summary = f"""# Preview Environment Plan
 

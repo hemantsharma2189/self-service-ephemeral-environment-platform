@@ -28,17 +28,14 @@ class PreviewEnvironmentRequest(BaseModel):
     ttl_hours: int = Field(default=8, gt=0, le=72)
     container_port: int = Field(default=8080, gt=0, le=65535)
     dry_run: bool = True
-    resources: ResourceRequirements = Field(
-        default_factory=ResourceRequirements
-    )
+    resources: ResourceRequirements = Field(default_factory=ResourceRequirements)
 
     @field_validator("repository", "owner")
     @classmethod
     def validate_name(cls, value: str) -> str:
         if not re.fullmatch(r"[A-Za-z0-9_.-]+", value):
             raise ValueError(
-                "Value may contain only letters, numbers, dots, "
-                "underscores, and hyphens."
+                "Value may contain only letters, numbers, dots, underscores, and hyphens."
             )
         return value
 
@@ -46,9 +43,7 @@ class PreviewEnvironmentRequest(BaseModel):
     @classmethod
     def validate_image(cls, value: str) -> str:
         if value.endswith(":latest"):
-            raise ValueError(
-                "Immutable image tags are required; ':latest' is not allowed."
-            )
+            raise ValueError("Immutable image tags are required; ':latest' is not allowed.")
         return value
 
 

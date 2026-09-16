@@ -17,14 +17,9 @@ def create_environment_plan(
         request.repository.lower(),
     ).strip("-")
 
-    environment_name = (
-        f"{repository_slug}-pr-{request.pull_request_number}"
-    )
+    environment_name = f"{repository_slug}-pr-{request.pull_request_number}"
     namespace = f"preview-pr-{request.pull_request_number}"
-    preview_url = (
-        f"https://pr-{request.pull_request_number}."
-        f"{base_domain}"
-    )
+    preview_url = f"https://pr-{request.pull_request_number}.{base_domain}"
 
     policy_decisions = [
         "Immutable container image tag accepted.",
@@ -34,10 +29,7 @@ def create_environment_plan(
     ]
 
     if request.dry_run:
-        policy_decisions.append(
-            "Dry-run mode enabled; no Kubernetes resources "
-            "will be created."
-        )
+        policy_decisions.append("Dry-run mode enabled; no Kubernetes resources will be created.")
 
     return EnvironmentPlan(
         environment_name=environment_name,

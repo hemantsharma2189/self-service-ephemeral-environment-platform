@@ -31,9 +31,7 @@ def parse_memory_gib(memory_value: str) -> float:
             amount = float(memory_value[: -len(unit)])
             return amount * multiplier
 
-    raise ValueError(
-        "Memory must use Ki, Mi, or Gi units."
-    )
+    raise ValueError("Memory must use Ki, Mi, or Gi units.")
 
 
 def estimate_environment_cost(
@@ -41,21 +39,11 @@ def estimate_environment_cost(
     cpu_hourly_rate: float = 0.04,
     memory_gib_hourly_rate: float = 0.005,
 ) -> CostEstimate:
-    cpu_cores = parse_cpu_cores(
-        request.resources.cpu_limit
-    )
-    memory_gib = parse_memory_gib(
-        request.resources.memory_limit
-    )
+    cpu_cores = parse_cpu_cores(request.resources.cpu_limit)
+    memory_gib = parse_memory_gib(request.resources.memory_limit)
 
-    cpu_cost = (
-        cpu_cores * cpu_hourly_rate * request.ttl_hours
-    )
-    memory_cost = (
-        memory_gib
-        * memory_gib_hourly_rate
-        * request.ttl_hours
-    )
+    cpu_cost = cpu_cores * cpu_hourly_rate * request.ttl_hours
+    memory_cost = memory_gib * memory_gib_hourly_rate * request.ttl_hours
 
     return CostEstimate(
         cpu_cost=round(cpu_cost, 4),

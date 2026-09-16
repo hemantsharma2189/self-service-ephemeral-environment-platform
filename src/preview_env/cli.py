@@ -12,13 +12,7 @@ from preview_env.cost import estimate_environment_cost
 from preview_env.planner import create_environment_plan
 from preview_env.service import generate_environment_artifacts
 
-
-app = typer.Typer(
-    help=(
-        "Create secure, temporary Kubernetes preview "
-        "environment plans."
-    )
-)
+app = typer.Typer(help=("Create secure, temporary Kubernetes preview environment plans."))
 console = Console()
 
 
@@ -42,15 +36,10 @@ def create(
             output_directory=output,
         )
     except (ConfigurationError, ValueError) as error:
-        console.print(
-            f"[red]Preview environment request failed:[/red] "
-            f"{error}"
-        )
+        console.print(f"[red]Preview environment request failed:[/red] {error}")
         raise typer.Exit(code=1) from error
 
-    table = Table(
-        title="Ephemeral Preview Environment Plan"
-    )
+    table = Table(title="Ephemeral Preview Environment Plan")
     table.add_column("Field")
     table.add_column("Value")
 
