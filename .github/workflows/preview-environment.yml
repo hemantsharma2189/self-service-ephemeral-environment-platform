@@ -1,0 +1,58 @@
+name: Pull Request Preview Environment
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+jobs:
+  preview-plan:
+    name: Generate Preview Environment Plan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install platform
+        run: pip install .
+
+      - name: Create pull-request configuration
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
+          REPOSITORY_FULL_NAME: ${{ github.repository }}
+          REQUEST_OWNER: ${{ github.actor }}
+        run: |
+          mkdir -p generated
+          {
+            echo "repository: ${REPOSITORY_NAME}"
+            echo "pull_request_number: ${PR_NUMBER}"
+            echo "commit_sha: ${COMMIT_SHA}"
+            echo "image: ghcr.io/${REPOSITORY_FULL_NAME}:${COMMIT_SHA}"
+            echo "owner: ${REQUEST_OWNER}"
+            echo "ttl_hours: 8"
+            echo "container_port: 8080"
+            echo "dry_run: true"
+          } > generated/preview-request.yaml
+
+      - name: Generate preview plan
+        run: preview-env generated/preview-request.yaml
+
+      - name: Upload preview evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-environment-pr-${{ github.event.pull_request.number }}
+          path: artifacts/
+          retention-days: 7
