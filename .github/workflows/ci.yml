@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate dry-run preview artifacts
         run: |
-          preview-env create examples/preview-request.yaml
+          preview-env examples/preview-request.yaml
           test -f artifacts/sample-cloud-application-pr-42/plan.json
           test -f artifacts/sample-cloud-application-pr-42/manifests.yaml
           test -f artifacts/sample-cloud-application-pr-42/summary.md
