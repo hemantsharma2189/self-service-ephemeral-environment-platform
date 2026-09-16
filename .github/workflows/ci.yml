@@ -1,0 +1,51 @@
+name: Preview Platform CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test and Validate Platform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run code-quality checks
+        run: ruff check src tests
+
+      - name: Run unit tests
+        run: pytest --cov=src/preview_env --cov-report=term-missing
+
+      - name: Generate dry-run preview artifacts
+        run: |
+          preview-env create examples/preview-request.yaml
+          test -f artifacts/sample-cloud-application-pr-42/plan.json
+          test -f artifacts/sample-cloud-application-pr-42/manifests.yaml
+          test -f artifacts/sample-cloud-application-pr-42/summary.md
+
+      - name: Upload preview evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-environment-evidence
+          path: artifacts/
