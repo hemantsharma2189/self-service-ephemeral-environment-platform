@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Annotated
 
 import typer
 from rich.console import Console
@@ -15,17 +16,20 @@ from preview_env.service import generate_environment_artifacts
 app = typer.Typer(help=("Create secure, temporary Kubernetes preview environment plans."))
 console = Console()
 
-
 @app.command()
 def create(
-    request_file: Path = typer.Argument(
-        ...,
-        help="Path to the YAML preview request.",
-    ),
-    output: Path = typer.Option(
-        Path("artifacts"),
-        help="Directory for generated evidence.",
-    ),
+    request_file: Annotated[
+        Path,
+        typer.Argument(
+            help="Path to the YAML preview request.",
+        ),
+    ],
+    output: Annotated[
+        Path,
+        typer.Option(
+            help="Directory for generated evidence.",
+        ),
+    ] = Path("artifacts"),
 ) -> None:
     try:
         request = load_request(request_file)
